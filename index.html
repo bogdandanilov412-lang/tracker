@@ -1,9 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Мой трекер</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Трекер Привычек</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2E7D32;
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        #taskInput {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        #addButton {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .task {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .task.completed span {
+            text-decoration: line-through;
+            color: #888;
+        }
+        .delete-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin-left: auto;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <h1>Привет! Трекер загружен.</h1>
+    <h1>📊 Трекер Привычек</h1>
+    <div class="input-group">
+        <input type="text" id="taskInput" placeholder="Добавить привычку...">
+        <button id="addButton">Добавить</button>
+    </div>
+    <div id="taskList"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTasks();
+            document.getElementById('addButton').addEventListener('click', addTask);
+            document.getElementById('taskInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addTask();
+            });
+        });
+
+        function addTask() {
+            const input = document.getElementById('taskInput');
+            const taskText = input.value.trim();
+            if (!taskText) return;
+
+            const task = {
+                id: Date.now(),
+                text: taskText,
+                completed: false
+            };
+
+            saveTask(task);
+            renderTask(task);
+            input.value = '';
+        }
+
+        function saveTask(task) {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.push(task);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.forEach(renderTask);
+        }
+
+        function renderTask(task) {
+            const taskList = document.getElementById('taskList');
+            const taskElement = document.createElement('div');
+            taskElement.className = `task ${task.completed ? 'completed' : ''}`;
+            taskElement.dataset.id = task.id;
+            
+            taskElement.innerHTML = `
+                <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                <span>${task.text}</span>
+                <button class="delete-btn" onclick="deleteTask(${task.id})">×</button>
+            `;
+            
+            taskList.appendChild(taskElement);
+        }
+
+        function toggleTask(id) {
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks = tasks.map(task => task.id === id ? { ...task, completed: !task.completed } : task);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            document.querySelector(`.task[data-id="${id}"]`).classList.toggle('completed');
+        }
+
+        function deleteTask(id) {
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks = tasks.filter(task => task.id !== id);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            document.querySelector(`.task[data-id="${id}"]`).remove();
+        }
+    </script>
 </body>
 </html>
