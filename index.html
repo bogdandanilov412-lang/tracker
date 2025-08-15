@@ -1,161 +1,496 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>Трекер успехов и благодарностей</title>
-<meta name="theme-color" content="#4CAF50">
+<meta name="theme-color" content="#1e8e3e" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAB0klEQVR4Xu3YQQrCMBBE0aO+1e0dUBiBYV5B7H2F0M8pziP/3cHcuJvOQwAAAAAAAAAAAICfsc7H3c17s0Xoeq+6V+q0Xy/ZU0qvuZf6T7aK/TbV8sYQ9ptq0+Pa14mK69V6O6sq6zVSraN0/zdugTeE4Kx5V+j1XuV+q6q0T6P0r3aqWPrO4mLEZpd5LtZgOaHlnWdYZh5+S+V6l6y7ROorX/GvI7sXszJY0dXPKbJm6b3OTv6vKc3/8blbrfZyH6PC/i+6kpuRq1/eyrl+qsxj3L9vX7M9nBzXdxQ3F/FV6r3h6hOtTph2u7+sVL96+vVd8j8v7/b8D3QYAAAAAAAAAAAAAYG/4A6rKc7+ZguwIAAAAASUVORK5CYII=">
+
 <style>
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    background: #f5f5f5;
-    color: #333;
+:root{
+  --bg:#f6f7f9;
+  --card:#ffffff;
+  --accent:#1e8e3e;
+  --muted:#7a7f86;
+  --danger:#e0504f;
+  --glass: rgba(255,255,255,0.7);
+  --radius:12px;
 }
-header {
-    background: #4CAF50;
-    color: white;
-    padding: 1rem;
-    text-align: center;
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:linear-gradient(180deg,var(--bg),#eef2ee);
+  color:#222;
+  -webkit-font-smoothing:antialiased;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  padding-bottom:48px;
 }
-section {
-    padding: 1rem;
+
+/* Header */
+.header{
+  background: linear-gradient(90deg,var(--accent),#2fb056);
+  color:white;
+  padding:18px 16px;
+  text-align:center;
+  box-shadow:0 4px 12px rgba(30,142,62,0.12);
+  border-bottom-left-radius:20px;
+  border-bottom-right-radius:20px;
 }
-h2, h3 {
-    margin: 0.5rem 0;
+.header h1{margin:0;font-size:1.15rem;letter-spacing:0.2px}
+.header p{margin:6px 0 0;opacity:0.95;font-size:0.9rem}
+
+/* Container */
+.container{
+  max-width:780px;
+  margin:16px auto;
+  padding:12px;
 }
-input, select, button {
-    padding: 0.5rem;
-    margin: 0.3rem 0;
-    width: 100%;
-    box-sizing: border-box;
+
+/* Card */
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:12px;
+  margin-bottom:12px;
+  box-shadow:0 6px 18px rgba(30,30,30,0.04);
 }
-button {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
+
+/* Controls */
+.controls{
+  display:flex;
+  gap:8px;
+  align-items:center;
 }
-button:hover {
-    background: #45a049;
+.select-wrap{flex:0 0 38%; min-width:120px}
+input[type="text"]{
+  flex:1;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid #e6e8ea;
+  font-size:15px;
+  outline:none;
 }
-.list-item {
-    background: white;
-    margin: 0.5rem 0;
-    padding: 0.5rem;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
+select{
+  width:100%;
+  padding:9px 10px;
+  border-radius:10px;
+  border:1px solid #e6e8ea;
+  background:white;
+  font-size:15px;
+  appearance:none;
 }
-.list-item button {
-    background: #e74c3c;
-    width: auto;
-    padding: 0 0.5rem;
+.btn{
+  background:var(--accent);
+  color:white;
+  padding:10px 12px;
+  border-radius:10px;
+  border:none;
+  font-weight:600;
+  font-size:15px;
+  min-width:90px;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+  box-shadow:0 6px 10px rgba(30,142,62,0.12);
 }
-.progress-container {
-    background: #ddd;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
+.btn:active{transform:translateY(1px)}
+.btn-danger{
+  background:var(--danger);
+  box-shadow:0 6px 10px rgba(224,80,79,0.12);
 }
-.progress-bar {
-    height: 10px;
-    background: #4CAF50;
-    width: 0%;
+
+/* Lists */
+.section-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+}
+.section-title h2{margin:0;font-size:1rem}
+.meta-small{color:var(--muted);font-size:0.85rem}
+
+/* Progress */
+.progress-row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+.progress-card{
+  flex:1 1 48%;
+  background:linear-gradient(180deg,rgba(0,0,0,0.01),rgba(0,0,0,0.02));
+  padding:10px;
+  border-radius:10px;
+}
+.progress-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+.progress-bar{
+  height:10px;
+  background:#e9ecef;
+  border-radius:8px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent),#29b74a);
+  transition:width 600ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* Items */
+.items-list{margin-top:6px}
+.item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:10px;
+  border-radius:10px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.85),var(--glass));
+  border:1px solid #f0f2f1;
+  margin-bottom:8px;
+}
+.item-left{display:flex;gap:12px;align-items:center;flex:1;min-width:0}
+.checkbox{
+  width:36px;height:36px;border-radius:8px;border:1px solid #e6e8ea;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted);cursor:pointer;flex:0 0 36px;
+}
+.item-text{flex:1;min-width:0;font-size:15px;word-break:break-word}
+.item-text.done{ text-decoration:line-through;color:#9aa0a6;opacity:0.9 }
+.item-meta{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Footer controls */
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.small{font-size:13px;padding:8px 10px;border-radius:10px;border:1px solid #e6e8ea;background:white;color:#333;cursor:pointer}
+
+/* Responsive */
+@media (max-width:520px){
+  .controls{flex-direction:column}
+  .select-wrap{width:100%}
+  .progress-card{flex:1 1 100%}
+  .btn{width:100%}
 }
 </style>
 </head>
 <body>
-<header>
-<h1>Трекер успехов и благодарностей</h1>
-</header>
+  <div class="header">
+    <h1>Трекер успехов и благодарностей</h1>
+    <p>День • Неделя • Месяц • Год — записывай, отмечай, прогрессируй</p>
+  </div>
 
-<section>
-<h2>Добавить цель / благодарность</h2>
-<select id="period">
-<option value="day">День</option>
-<option value="week">Неделя</option>
-<option value="month">Месяц</option>
-<option value="year">Год</option>
-</select>
-<input type="text" id="itemText" placeholder="Напишите цель или благодарность">
-<button onclick="addItem()">Добавить</button>
-</section>
+  <div class="container">
+    <div class="card">
+      <div class="controls">
+        <div class="select-wrap">
+          <select id="periodSelect" aria-label="Период">
+            <option value="day">День</option>
+            <option value="week">Неделя</option>
+            <option value="month">Месяц</option>
+            <option value="year">Год</option>
+          </select>
+        </div>
+        <input id="textInput" type="text" placeholder="Напишите цель или за что благодарна..." aria-label="Текст цели">
+        <button id="addBtn" class="btn">Добавить</button>
+      </div>
 
-<section>
-<h2>Список и прогресс</h2>
-<div id="lists"></div>
-</section>
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+        <div class="meta-small">Автосохранение: включено • Дата добавления сохраняется</div>
+        <div class="tools">
+          <button id="exportBtn" class="small">Экспорт (JSON)</button>
+          <label class="small" title="Импортировать JSON">
+            Импорт
+            <input id="importFile" type="file" accept="application/json" style="display:none">
+          </label>
+          <button id="resetBtn" class="small" title="Очистить все">Сбросить</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <h2>Прогресс</h2>
+        <div class="meta-small" id="summaryMeta">—</div>
+      </div>
+
+      <div id="progress" class="progress-row">
+        <!-- Прогресс-карты генерируются скриптом -->
+      </div>
+
+      <div class="section-title" style="margin-top:8px">
+        <h2>Список</h2>
+        <div class="meta-small">Нажми на квадратик, чтобы отметить выполненное. Дата — когда добавлена.</div>
+      </div>
+
+      <div id="lists" class="items-list" style="margin-top:8px">
+        <!-- Списки генерируются скриптом -->
+      </div>
+    </div>
+
+    <div style="text-align:center;color:var(--muted);font-size:13px;margin-top:6px">Сохранено локально в браузере — доступны офлайн и в PWA</div>
+  </div>
 
 <script>
-// Данные
-let data = JSON.parse(localStorage.getItem('trackerData')) || {
-    day: [], week: [], month: [], year: []
-};
-
-function saveData() {
-    localStorage.setItem('trackerData', JSON.stringify(data));
+/* ===== DATA STRUCTURE =====
+storage key: tracker_v1
+{
+  day: [{text, done (bool), dateAdded (ISO)}],
+  week: [...],
+  month: [...],
+  year: [...]
 }
+*/
+const STORAGE_KEY = 'tracker_v1';
 
-function addItem() {
-    const period = document.getElementById('period').value;
-    const text = document.getElementById('itemText').value.trim();
-    if (!text) return;
-    data[period].push({text: text, done: false});
-    document.getElementById('itemText').value = '';
+const defaultData = { day: [], week: [], month: [], year: [] };
+let data = loadData();
+
+const periodNames = { day:'День', week:'Неделя', month:'Месяц', year:'Год' };
+
+const $ = id => document.getElementById(id);
+const addBtn = $('addBtn');
+const textInput = $('textInput');
+const periodSelect = $('periodSelect');
+const listsRoot = $('lists');
+const progressRoot = $('progress');
+const summaryMeta = $('summaryMeta');
+const exportBtn = $('exportBtn');
+const resetBtn = $('resetBtn');
+const importFile = $('importFile');
+
+addBtn.addEventListener('click', onAdd);
+textInput.addEventListener('keydown', e => { if(e.key === 'Enter') onAdd(); });
+
+exportBtn.addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'tracker-export.json';
+  document.body.appendChild(a); a.click();
+  a.remove(); URL.revokeObjectURL(url);
+});
+
+resetBtn.addEventListener('click', () => {
+  if(confirm('Сбросить все данные? Это удалит все записи локально.')) {
+    data = JSON.parse(JSON.stringify(defaultData));
     saveData();
-    renderLists();
+    renderAll();
+  }
+});
+
+importFile.addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+      // простая валидация
+      if(typeof imported !== 'object' || !imported.day) throw new Error('Неверный формат');
+      data = imported;
+      saveData();
+      renderAll();
+      alert('Импорт завершён');
+    } catch(err) {
+      alert('Ошибка импорта: ' + err.message);
+    }
+  };
+  reader.readAsText(f);
+  e.target.value = '';
+});
+
+/* load/save */
+function loadData(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return JSON.parse(JSON.stringify(defaultData));
+    const parsed = JSON.parse(raw);
+    // backward compatibility: convert simple arrays to objects with fields
+    for(const k of ['day','week','month','year']){
+      if(Array.isArray(parsed[k]) && parsed[k].length && typeof parsed[k][0] === 'string'){
+        parsed[k] = parsed[k].map(t => ({text:t, done:false, dateAdded: (new Date()).toISOString()}));
+      } else if(Array.isArray(parsed[k])){
+        // ensure items have fields
+        parsed[k] = parsed[k].map(it => ({
+          text: it.text || '',
+          done: !!it.done,
+          dateAdded: it.dateAdded || (new Date()).toISOString()
+        }));
+      } else parsed[k] = [];
+    }
+    return parsed;
+  } catch(e) {
+    console.warn('Ошибка чтения localStorage, сбрасываю', e);
+    return JSON.parse(JSON.stringify(defaultData));
+  }
 }
 
-function toggleDone(period, index) {
-    data[period][index].done = !data[period][index].done;
-    saveData();
-    renderLists();
+function saveData(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch(e){
+    console.warn('Ошибка сохранения', e);
+  }
 }
 
-function removeItem(period, index) {
-    data[period].splice(index,1);
-    saveData();
-    renderLists();
+/* add item */
+function onAdd(){
+  const text = textInput.value.trim();
+  if(!text) { textInput.focus(); return; }
+  const period = periodSelect.value;
+  const item = { text, done:false, dateAdded: (new Date()).toISOString() };
+  data[period].unshift(item); // newest on top
+  textInput.value = '';
+  saveData();
+  renderAll();
 }
 
-function renderLists() {
-    const listsDiv = document.getElementById('lists');
-    listsDiv.innerHTML = '';
-    const titleMap = {day:'День', week:'Неделя', month:'Месяц', year:'Год'};
-    ['day','week','month','year'].forEach(period=>{
-        if (data[period].length > 0) {
-            const section = document.createElement('div');
-            const h3 = document.createElement('h3');
-            h3.textContent = titleMap[period];
-            section.appendChild(h3);
+/* toggle done */
+function toggleDone(period, idx){
+  data[period][idx].done = !data[period][idx].done;
+  saveData();
+  renderAll();
+}
 
-            // Прогресс
-            const total = data[period].length;
-            const doneCount = data[period].filter(i=>i.done).length;
-            const progressContainer = document.createElement('div');
-            progressContainer.className = 'progress-container';
-            const progressBar = document.createElement('div');
-            progressBar.className = 'progress-bar';
-            progressBar.style.width = `${(doneCount/total)*100}%`;
-            progressContainer.appendChild(progressBar);
-            section.appendChild(progressContainer);
+/* remove */
+function removeItem(period, idx){
+  if(!confirm('Удалить запись?')) return;
+  data[period].splice(idx,1);
+  saveData();
+  renderAll();
+}
 
-            // Список
-            data[period].forEach((item,index)=>{
-                const div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerHTML = `<span style="text-decoration:${item.done?'line-through':''};cursor:pointer" onclick="toggleDone('${period}',${index})">${item.text}</span> <button onclick="removeItem('${period}',${index})">✕</button>`;
-                section.appendChild(div);
-            });
-            listsDiv.appendChild(section);
-        }
+/* helpers */
+function fmtDate(iso){
+  try{
+    const d = new Date(iso);
+    const day = d.getDate().toString().padStart(2,'0');
+    const month = (d.getMonth()+1).toString().padStart(2,'0');
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
+  }catch(e){return iso}
+}
+
+/* render progress cards */
+function renderProgress(){
+  progressRoot.innerHTML = '';
+  let totalAll = 0, doneAll = 0;
+  for(const period of ['day','week','month','year']){
+    const arr = data[period] || [];
+    const total = arr.length;
+    const done = arr.filter(i=>i.done).length;
+    totalAll += total; doneAll += done;
+
+    const card = document.createElement('div');
+    card.className = 'progress-card';
+    const head = document.createElement('div'); head.className='progress-head';
+    const title = document.createElement('div'); title.style.fontWeight=700; title.textContent = periodNames[period];
+    const stat = document.createElement('div'); stat.style.fontSize='13px'; stat.style.color='#5f6467';
+    stat.textContent = `${done}/${total}`;
+    head.appendChild(title); head.appendChild(stat);
+
+    const bar = document.createElement('div'); bar.className='progress-bar';
+    const fill = document.createElement('div'); fill.className='progress-fill';
+    // avoid NaN
+    const pct = total === 0 ? 0 : Math.round((done/total)*100);
+    // set width a bit later to animate
+    fill.style.width = '0%';
+    bar.appendChild(fill);
+
+    card.appendChild(head);
+    card.appendChild(bar);
+
+    // small label
+    const lbl = document.createElement('div'); lbl.className='meta-small'; lbl.style.marginTop='8px';
+    lbl.textContent = total ? `Прогресс: ${pct}% • Всего: ${total}` : 'Пусто';
+    card.appendChild(lbl);
+
+    progressRoot.appendChild(card);
+
+    // animate fill
+    setTimeout(()=> { fill.style.width = pct + '%'; }, 60);
+  }
+  summaryMeta.textContent = `Всего: ${doneAll}/${totalAll}`;
+}
+
+/* render lists */
+function renderLists(){
+  listsRoot.innerHTML = '';
+  for(const period of ['day','week','month','year']){
+    const arr = data[period] || [];
+    if(arr.length === 0) continue;
+
+    const sectionTitle = document.createElement('div');
+    sectionTitle.style.display = 'flex';
+    sectionTitle.style.justifyContent = 'space-between';
+    sectionTitle.style.alignItems = 'center';
+    sectionTitle.style.marginTop = '8px';
+    const h = document.createElement('div'); h.style.fontWeight = 700; h.textContent = periodNames[period];
+    const small = document.createElement('div'); small.className='meta-small'; small.textContent = `${arr.length} запись(ей)`;
+    sectionTitle.appendChild(h); sectionTitle.appendChild(small);
+    listsRoot.appendChild(sectionTitle);
+
+    arr.forEach((item, idx) => {
+      const el = document.createElement('div'); el.className='item';
+      const left = document.createElement('div'); left.className='item-left';
+      const cb = document.createElement('div'); cb.className='checkbox'; cb.innerHTML = item.done ? '✓' : '+';
+      cb.title = item.done ? 'Снять отметку' : 'Отметить как выполненное';
+      cb.addEventListener('click', () => toggleDone(period, idx));
+
+      const textWrap = document.createElement('div'); textWrap.style.flex = '1';
+      const t = document.createElement('div'); t.className = 'item-text' + (item.done ? ' done' : '');
+      t.textContent = item.text;
+      const meta = document.createElement('div'); meta.className='item-meta';
+      meta.textContent = 'Добавлено: ' + fmtDate(item.dateAdded);
+
+      textWrap.appendChild(t); textWrap.appendChild(meta);
+      left.appendChild(cb); left.appendChild(textWrap);
+
+      const right = document.createElement('div');
+      const del = document.createElement('button'); del.className='small'; del.textContent='Удалить';
+      del.style.background='transparent'; del.style.border='1px solid #f0f2f1';
+      del.addEventListener('click', () => removeItem(period, idx));
+
+      right.appendChild(del);
+
+      el.appendChild(left); el.appendChild(right);
+      listsRoot.appendChild(el);
     });
+  }
+
+  // if no items — friendly hint
+  if(listsRoot.children.length === 0){
+    const hint = document.createElement('div'); hint.style.textAlign='center'; hint.style.color='var(--muted)';
+    hint.style.padding='18px'; hint.textContent = 'Пока нет записей — добавь первую цель или благодарность сверху';
+    listsRoot.appendChild(hint);
+  }
 }
 
-renderLists();
+/* render all */
+function renderAll(){ renderProgress(); renderLists(); }
+
+/* initial render */
+renderAll();
+
+/* Make app available offline as PWA-like: handle beforeunload save (redundant but safe) */
+window.addEventListener('beforeunload', saveData);
+
+/* small usability: paste text from clipboard on long press (iOS: works with context menu) */
+/* nothing required here - kept simple */
+
+/* end of script */
 </script>
 </body>
 </html>
-
